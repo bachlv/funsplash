@@ -1,21 +1,24 @@
-import { pexels, unsplash } from '~/server/engines';
+import { pexels, pixabay, unsplash } from '~/server/engines';
 import {
-  ErrorMessage,
+  ApiErrorMessage,
   SearchParams,
   SearchResult,
   SearchResultPhoto,
 } from 'server/types';
 
 const search = cachedFunction(
-  async (params: SearchParams): Promise<SearchResult> => {
-    const [pexelsResult, unsplashResult] = await Promise.all([
+  async (params: SearchParams): Promise<SearchResult | any> => {
+    const [pexelsResult, pixabayResult, unsplashResult] = await Promise.all([
       pexels.search(params),
+      pixabay.search(params),
       unsplash.search(params),
     ]);
 
     const results: SearchResultPhoto[] = [];
     pexelsResult.photos.forEach((p) => results.push(pexels.getPhoto(p)));
+    pixabayResult.hits.forEach((p) => results.push(pixabay.getPhoto(p)));
     unsplashResult.results.forEach((p) => results.push(unsplash.getPhoto(p)));
+
     results.sort((a, b) => (a.color < b.color ? -1 : 1));
 
     return {
@@ -29,7 +32,7 @@ const search = cachedFunction(
 );
 
 export default defineEventHandler(
-  async (event): Promise<SearchResult | ErrorMessage> => {
+  async (event): Promise<SearchResult | ApiErrorMessage> => {
     const params: SearchParams = useQuery(event);
 
     if (params.query == undefined || params.query === '') {

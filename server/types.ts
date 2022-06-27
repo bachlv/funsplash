@@ -27,6 +27,6 @@ export type SearchResultPhotoUrl = {
   thumb: string;
 };
 
-export type ErrorMessage = {
+export type ApiErrorMessage = {
   error: string;
 };
