@@ -21,7 +21,7 @@ const search = cachedFunction(
     unsplashResult.results.forEach((p) => queue.push(unsplash.getImage(p)));
 
     const results = await Promise.all(queue);
-    results.sort((a, b) => (a.color < b.color ? -1 : 1));
+    results.sort((a, b) => (a.blurhash < b.blurhash ? -1 : 1));
 
     return {
       total:

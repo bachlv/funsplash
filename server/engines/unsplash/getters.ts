@@ -5,7 +5,6 @@ export const getImage = (photo: UnsplashImage): SearchResultImage => ({
   id: 'un-' + photo.id,
   width: photo.width,
   height: photo.height,
-  color: photo.color,
   description: photo.alt_description,
   blurhash: photo.blur_hash,
   src: {

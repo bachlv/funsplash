@@ -13,9 +13,8 @@ export type SearchResultImage = {
   id: string;
   width: number;
   height: number;
-  color: string;
   description: string;
-  blurhash?: string;
+  blurhash: string;
   src: SearchResultImageUrl;
   photographer: string;
   link: string;

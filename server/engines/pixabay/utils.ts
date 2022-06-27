@@ -14,7 +14,6 @@ export const getImage = async (
   id: 'pi-' + photo.id,
   width: photo.imageWidth,
   height: photo.imageHeight,
-  color: 'NOCOLOR',
   description: photo.tags,
   blurhash: await getBlurhash(photo.previewURL),
   src: {
