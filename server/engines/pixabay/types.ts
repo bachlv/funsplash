@@ -26,10 +26,10 @@ export type PixabaySearchParams = {
 export type PixabaySearchResult = {
   total: number;
   totalHits: number;
-  hits: PixabayPhoto[];
+  hits: PixabayImage[];
 };
 
-export type PixabayPhoto = {
+export type PixabayImage = {
   id: number;
   pageURL: string;
   type: string;

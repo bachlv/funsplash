@@ -18,23 +18,23 @@ export type PexelsSearchParams = {
 export type PexelsSearchResult = {
   page: number;
   per_page: number;
-  photos: PexelsPhoto[];
+  photos: PexelsImage[];
   total_results: number;
 };
 
-export type PexelsPhoto = {
+export type PexelsImage = {
   id: number;
   width: number;
   height: number;
   url: string;
   photographer: string;
   avg_color: string;
-  src: PexelsPhotoUrls;
+  src: PexelsImageUrls;
   liked: boolean;
   alt: string;
 };
 
-export type PexelsPhotoUrls = {
+export type PexelsImageUrls = {
   original: string;
   large2x: string;
   large: string;

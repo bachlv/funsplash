@@ -3,26 +3,31 @@ import {
   ApiErrorMessage,
   SearchParams,
   SearchResult,
-  SearchResultPhoto,
+  SearchResultImage,
 } from 'server/types';
 
 const search = cachedFunction(
-  async (params: SearchParams): Promise<SearchResult | any> => {
+  async (params: SearchParams): Promise<SearchResult> => {
     const [pexelsResult, pixabayResult, unsplashResult] = await Promise.all([
       pexels.search(params),
       pixabay.search(params),
       unsplash.search(params),
     ]);
 
-    const results: SearchResultPhoto[] = [];
-    pexelsResult.photos.forEach((p) => results.push(pexels.getPhoto(p)));
-    pixabayResult.hits.forEach((p) => results.push(pixabay.getPhoto(p)));
-    unsplashResult.results.forEach((p) => results.push(unsplash.getPhoto(p)));
+    const queue: (Promise<SearchResultImage> | SearchResultImage)[] = [];
 
+    pexelsResult.photos.forEach(async (p) => queue.push(pexels.getImage(p)));
+    pixabayResult.hits.forEach((p) => queue.push(pixabay.getImage(p)));
+    unsplashResult.results.forEach((p) => queue.push(unsplash.getImage(p)));
+
+    const results = await Promise.all(queue);
     results.sort((a, b) => (a.color < b.color ? -1 : 1));
 
     return {
-      total: pexelsResult.total_results + unsplashResult.total,
+      total:
+        pexelsResult.total_results +
+        pixabayResult.totalHits +
+        unsplashResult.total,
       results: results,
     };
   },

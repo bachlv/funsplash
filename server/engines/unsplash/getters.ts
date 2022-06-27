@@ -1,12 +1,13 @@
-import { SearchResultPhoto } from '~~/server/types';
-import { UnsplashPhoto } from './types';
+import { SearchResultImage } from '~~/server/types';
+import { UnsplashImage } from './types';
 
-export const getPhoto = (photo: UnsplashPhoto): SearchResultPhoto => ({
+export const getImage = (photo: UnsplashImage): SearchResultImage => ({
   id: 'un-' + photo.id,
   width: photo.width,
   height: photo.height,
   color: photo.color,
   description: photo.alt_description,
+  blurhash: photo.blur_hash,
   src: {
     original: photo.urls.raw,
     regular: photo.urls.regular,

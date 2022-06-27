@@ -21,10 +21,10 @@ export type UnsplashSearchParams = {
 export type UnsplashSearchResult = {
   total: number;
   total_pages: number;
-  results: UnsplashPhoto[];
+  results: UnsplashImage[];
 };
 
-export type UnsplashPhoto = {
+export type UnsplashImage = {
   id: string;
   created_at: string;
   updated_at: string;
@@ -35,12 +35,12 @@ export type UnsplashPhoto = {
   blur_hash: string;
   description?: string;
   alt_description?: string;
-  urls: UnsplashPhotoUrls;
+  urls: UnsplashImageUrls;
   links: UnsplashLinks;
   user: UnsplashUser;
 };
 
-export type UnsplashPhotoUrls = {
+export type UnsplashImageUrls = {
   raw: string;
   full: string;
   regular: string;
