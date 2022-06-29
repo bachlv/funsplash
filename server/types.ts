@@ -1,7 +1,7 @@
 export type SearchParams = {
-  query?: string;
+  query: string;
+  page?: string | number;
   color?: string;
-  page?: string;
 };
 
 export type SearchResult = {
@@ -14,16 +14,17 @@ export type SearchResultImage = {
   width: number;
   height: number;
   description: string;
-  blurhash: string;
+  blurhash?: string;
   src: SearchResultImageUrl;
   photographer: string;
+  provider: string;
   link: string;
 };
 
 export type SearchResultImageUrl = {
   original: string;
   regular: string;
-  small: string;
+  small?: string;
   thumb: string;
 };
 

@@ -1,4 +1,4 @@
-import { SearchResultImage } from '~/server/types';
+import { SearchParams, SearchResultImage } from '~/server/types';
 import { PexelsImage } from './types';
 import { getBlurhash } from '../utils';
 
@@ -9,15 +9,13 @@ export const getImage = async (
   width: photo.width,
   height: photo.height,
   description: photo.alt,
-  blurhash: await getBlurhash(
-    photo.src.original + '?auto=compress&cs=tinysrgb&dpr=1&w=32'
-  ),
   src: {
     original: photo.src.original,
-    regular: photo.src.large,
-    small: photo.src.small,
+    regular: photo.src.large2x,
+    small: photo.src.large,
     thumb: photo.src.tiny,
   },
   photographer: photo.photographer,
+  provider: 'pexels',
   link: photo.url,
 });

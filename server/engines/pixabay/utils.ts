@@ -15,7 +15,6 @@ export const getImage = async (
   width: photo.imageWidth,
   height: photo.imageHeight,
   description: photo.tags,
-  blurhash: await getBlurhash(photo.previewURL),
   src: {
     original: getDirectLink(photo.previewURL),
     regular: photo.largeImageURL,
@@ -23,5 +22,6 @@ export const getImage = async (
     thumb: photo.previewURL,
   },
   photographer: photo.user,
+  provider: 'pixabay',
   link: photo.pageURL,
 });

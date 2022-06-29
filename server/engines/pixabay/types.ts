@@ -21,6 +21,7 @@ export type PixabaySearchParams = {
     | 'gray'
     | 'transparent';
   orientation?: 'all' | 'horizontal' | 'vertical';
+  image_type?: 'all' | 'photo' | 'illustration' | 'vector';
 };
 
 export type PixabaySearchResult = {

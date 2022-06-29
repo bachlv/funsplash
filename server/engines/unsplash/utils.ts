@@ -14,5 +14,6 @@ export const getImage = (photo: UnsplashImage): SearchResultImage => ({
     thumb: photo.urls.thumb,
   },
   photographer: photo.user.name,
+  provider: 'unsplash',
   link: photo.links.html,
 });

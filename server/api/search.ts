@@ -4,15 +4,17 @@ import {
   SearchParams,
   SearchResult,
   SearchResultImage,
-} from 'server/types';
+} from '~/server/types';
 
 const search = cachedFunction(
   async (params: SearchParams): Promise<SearchResult> => {
-    const [pexelsResult, pixabayResult, unsplashResult] = await Promise.all([
+    const searchApiResult = await Promise.all([
       pexels.search(params),
       pixabay.search(params),
       unsplash.search(params),
     ]);
+
+    const [pexelsResult, pixabayResult, unsplashResult] = searchApiResult;
 
     const queue: (Promise<SearchResultImage> | SearchResultImage)[] = [];
 
@@ -21,7 +23,7 @@ const search = cachedFunction(
     unsplashResult.results.forEach((p) => queue.push(unsplash.getImage(p)));
 
     const results = await Promise.all(queue);
-    results.sort((a, b) => (a.blurhash < b.blurhash ? -1 : 1));
+    results.sort(() => 0.5 - Math.random());
 
     return {
       total:
@@ -38,14 +40,24 @@ const search = cachedFunction(
 
 export default defineEventHandler(
   async (event): Promise<SearchResult | ApiErrorMessage> => {
-    const params: SearchParams = useQuery(event);
+    const params: Partial<SearchParams> = useQuery(event);
 
     if (params.query == undefined || params.query === '') {
       event.res.statusCode = 400;
       return { error: 'Query, maybe?' };
     }
 
-    const searchResult = await search(params);
-    return searchResult;
+    if (params.page && !isFinite(parseInt(params.page))) {
+      event.res.statusCode = 400;
+      return { error: 'What page is it?' };
+    }
+
+    try {
+      const searchResult = await search(params);
+      return searchResult;
+    } catch (err) {
+      event.res.statusCode = 400;
+      return { error: err.message };
+    }
   }
 );
