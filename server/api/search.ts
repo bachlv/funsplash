@@ -4,7 +4,7 @@ import {
   SearchParams,
   SearchResult,
   SearchResultImage,
-} from '~/server/types';
+} from '~/types';
 
 const search = cachedFunction(
   async (params: SearchParams): Promise<SearchResult> => {
