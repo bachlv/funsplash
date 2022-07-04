@@ -5,9 +5,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
-const page = useState('page', () => '');
-</script>
+<script setup lang="ts"></script>
 
 <style lang="scss">
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
@@ -18,6 +16,7 @@ body {
   margin: 0;
   font-family: var(--sans-serif);
   font-size: 16px;
+  font-feature-settings: 'kern' on;
 }
 
 ul {
@@ -30,8 +29,17 @@ ul {
   box-sizing: inherit;
 }
 
+// *:focus {
+//   outline: 2px solid var(--color-accent);
+//   border-radius: inherit;
+// }
+
 :root {
-  --sans-serif: Pretendard, system-ui, sans-serif;
+  --sans-serif: -apple-system, Pretendard, system-ui, sans-serif;
+  --border-radius: 0.25rem;
+  --border-width: 1px;
+  --color-primary: black;
+  --color-accent: rgba(0, 0, 0, 0.15);
 }
 
 .page-enter-active,

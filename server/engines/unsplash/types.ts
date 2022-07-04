@@ -60,3 +60,10 @@ export type UnsplashUser = {
   username: string;
   name: string;
 };
+
+export type UnsplashAutocomplete = {
+  autocomplete: Array<{
+    query: string;
+    priority: number;
+  }>;
+};

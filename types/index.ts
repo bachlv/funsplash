@@ -31,3 +31,9 @@ export type SearchResultImageUrl = {
 export type ApiErrorMessage = {
   error: string;
 };
+
+export type ApiAutocomplete = {
+  autocomplete: Array<{
+    query: string;
+  }>;
+};

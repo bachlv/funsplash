@@ -30,6 +30,7 @@ const searchParams = ref({
   page: pagination,
 });
 const loading = ref(false);
+useState('page').value = 'search';
 
 const getCurrentPage = () => {
   const pageNumber = parseInt(useRoute().query.page as string);
@@ -56,8 +57,6 @@ const intersected = async () => {
     })
     .catch(() => (pagination.value = searchParams.value.page) - 1);
 };
-
-useState('page').value = 'search';
 </script>
 
 <style lang="scss">

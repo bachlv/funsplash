@@ -1,10 +1,6 @@
 <template>
   <div></div>
 </template>
-<script lang="ts">
-export default {
-  created() {
-    useState('page').value = 'home';
-  },
-};
+<script setup lang="ts">
+useState('page').value = 'home';
 </script>

@@ -1,5 +1,5 @@
 import { SearchResultImage } from 'types';
-import { UnsplashImage } from './types';
+import { UnsplashImage, UnsplashAutocomplete } from './types';
 
 export const request = async (url: URL) => {
   const search = await fetch(url, {
@@ -31,4 +31,8 @@ export const getImage = (photo: UnsplashImage): SearchResultImage => ({
   photographer: photo.user.name,
   provider: 'unsplash',
   link: photo.links.html,
+});
+
+export const getAutocomplete = (data: UnsplashAutocomplete) => ({
+  autocomplete: data.autocomplete.map((e) => e.query),
 });

@@ -46,8 +46,9 @@ export default defineEventHandler(
       event.res.statusCode = 400;
       return { error: 'Query, maybe?' };
     }
+    params.query = params.query.replace('-', ' ');
 
-    if (params.page && !isFinite(parseInt(params.page))) {
+    if (params.page && !isFinite(parseInt(params.page as string))) {
       event.res.statusCode = 400;
       return { error: 'What page is it?' };
     }
