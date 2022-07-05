@@ -1,11 +1,15 @@
 <template>
   <div
     class="search-box-container"
-    :class="{ expanded: page === 'home', collapsed: page !== 'home' }"
+    :class="{
+      expanded: page === 'home',
+      collapsed: page !== 'home',
+      loading: isImageLoading,
+    }"
   >
     <div class="branding" v-if="page === 'home'">
       <NuxtLink to="/"><Logo class="logo" /></NuxtLink>
-      <h1 v-if="page === 'home'" class="wordmark">Funsplash</h1>
+      <h1 class="wordmark">Funsplash</h1>
     </div>
     <NuxtLink to="/" v-else class="branding"><Logo class="logo" /></NuxtLink>
 
@@ -60,6 +64,7 @@ export default {
       isAcEnabled: false,
       isAcPending: false,
       isAcFetching: false,
+      isImageLoading: useState('loading', () => false),
       isInputFocusedOut: false,
       autocomplete: [],
       acSelectionIndex: -1,
@@ -72,6 +77,7 @@ export default {
         const pageLocation = useState('page').value;
         if (pageLocation) return pageLocation;
         if (this.$route.path === '/') return 'home';
+        return '';
       },
     },
 
@@ -106,16 +112,17 @@ export default {
       this.$refs.searchButton.blur();
     },
     submitSearchRequest() {
-      console.log(this.$route);
       if (!this.query) {
         this.isQueryInvalid = true;
         setTimeout(() => (this.isQueryInvalid = false), 500);
         return;
       }
+      this.isImageLoading = true;
       this.navigate(this.query);
+      window.scrollTo(0, 0);
     },
     getQueryFromPath() {
-      const query = this.$route.path.split('/')[2]?.replace('-', ' ');
+      const query = this.$route.path.split('/')[2]?.replace(/-+/g, ' ');
       return query ? decodeURIComponent(query) : '';
     },
 
@@ -183,6 +190,42 @@ export default {
 </script>
 
 <style lang="scss">
+@mixin before-loading-indicator {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: add, add;
+  mask-composite: exclude;
+  background: var(--color-accent);
+  width: 100%;
+  pointer-events: none;
+}
+
+@mixin before-loading-animation {
+  background: linear-gradient(
+    90deg,
+    white,
+    var(--color-primary) 20%,
+    var(--color-primary) 80%,
+    white
+  );
+  background-size: 200% auto;
+  animation: loading 1s linear infinite;
+}
+
+@keyframes loading {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
 .search-box-container {
   display: flex;
   position: relative;
@@ -190,7 +233,7 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  transition: all 0.15s ease;
+  transition: all 0.2s ease;
 }
 
 .expanded {
@@ -215,16 +258,31 @@ export default {
   position: fixed;
   top: 0;
   width: 100%;
-  border-bottom: var(--border-width) solid var(--color-accent);
   background-color: white;
   padding: 0.5rem;
+
+  .search-box {
+    width: 32rem;
+  }
+
   .branding {
     height: inherit;
     max-height: 3.5rem;
     padding: inherit;
-    .logo {
-      padding: 0.1rem;
-      height: 100%;
+  }
+  .logo {
+    padding: 0.1rem;
+    height: 100%;
+  }
+
+  &::before {
+    @include before-loading-indicator;
+    padding-bottom: var(--border-width);
+  }
+  &.loading {
+    &::before {
+      @include before-loading-animation;
+      padding-bottom: 0.125rem;
     }
   }
 }
@@ -246,8 +304,20 @@ export default {
   font-weight: 400;
   padding-right: 3.75rem;
   transition: all 0.2s ease;
-  background-color: white;
   border-radius: var(--border-radius);
+
+  &:hover {
+    &::before {
+      background-color: var(--color-primary);
+    }
+  }
+
+  &::before {
+    transition: all 0.2s ease-out;
+    border-radius: var(--border-radius);
+    padding: var(--border-width);
+    @include before-loading-indicator;
+  }
 
   &.invalid {
     animation: shake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
@@ -256,36 +326,9 @@ export default {
     perspective: 1000px;
   }
 
-  &::before {
-    content: '';
-    position: absolute;
-    border-radius: var(--border-radius);
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    mask-composite: add, add;
-    mask-composite: exclude;
-    background: var(--color-accent);
-    padding: var(--border-width);
-    width: 100%;
-    pointer-events: none;
-  }
-
   &.ac-loading {
-    @keyframes ac-loading {
-      from {
-        background-position: 0 0;
-      }
-      to {
-        background-position: -200% 0;
-      }
-    }
     &::before {
-      background: linear-gradient(90deg, #fff, #000 20%, #000 80%, #fff);
-      background-size: 200% auto;
-      animation: ac-loading 1s linear infinite;
+      @include before-loading-animation;
     }
   }
 
@@ -315,7 +358,7 @@ export default {
     &:hover,
     &:focus {
       background-color: rgba(0, 0, 0, 0.1);
-      fill: black;
+      fill: var(--color-primary);
     }
 
     svg {
@@ -324,50 +367,51 @@ export default {
       margin: 0.125rem auto 0;
     }
   }
+}
 
-  .autocomplete {
-    position: absolute;
-    display: block;
-    box-sizing: content-box;
-    width: calc(100% - 0.5px);
-    overflow-y: scroll;
-    padding: 0.5rem 0 0.5rem;
-    margin-left: calc(-1 * var(--border-width));
-    background-color: white;
-    border: var(--border-width) solid gray;
-    border-radius: 4px;
-    z-index: 10;
+.autocomplete {
+  position: absolute;
+  display: block;
+  box-sizing: content-box;
+  width: calc(100% - 0.5px);
+  overflow-y: scroll;
+  padding: 0.5rem 0 0.5rem;
+  margin-left: calc(-1 * var(--border-width));
+  background-color: white;
+  border: var(--border-width) solid var(--color-accent);
+  border-radius: var(--border-radius);
+  text-align: left;
+  z-index: 10;
+}
+
+.autocomplete-item {
+  padding: 1rem 1.25rem 1rem 1.25rem;
+  cursor: pointer;
+  &.active {
+    background-color: #0000000f;
+  }
+}
+
+@keyframes shake {
+  10%,
+  90% {
+    transform: translate3d(-1px, 0, 0);
   }
 
-  .autocomplete-item {
-    padding: 1rem 1.25rem 1rem 1.25rem;
-    cursor: pointer;
-    &.active {
-      background-color: #0000000f;
-    }
+  20%,
+  80% {
+    transform: translate3d(2px, 0, 0);
   }
 
-  @keyframes shake {
-    10%,
-    90% {
-      transform: translate3d(-1px, 0, 0);
-    }
+  30%,
+  50%,
+  70% {
+    transform: translate3d(-4px, 0, 0);
+  }
 
-    20%,
-    80% {
-      transform: translate3d(2px, 0, 0);
-    }
-
-    30%,
-    50%,
-    70% {
-      transform: translate3d(-4px, 0, 0);
-    }
-
-    40%,
-    60% {
-      transform: translate3d(4px, 0, 0);
-    }
+  40%,
+  60% {
+    transform: translate3d(4px, 0, 0);
   }
 }
 </style>

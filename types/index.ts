@@ -5,7 +5,7 @@ export type SearchParams = {
 };
 
 export type SearchResult = {
-  total: number;
+  total?: number;
   results: SearchResultImage[] | any;
 };
 

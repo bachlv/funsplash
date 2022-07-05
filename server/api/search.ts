@@ -9,27 +9,25 @@ import {
 const search = cachedFunction(
   async (params: SearchParams): Promise<SearchResult> => {
     const searchApiResult = await Promise.all([
-      pexels.search(params),
-      pixabay.search(params),
-      unsplash.search(params),
+      pexels.search(params).catch((err) => console.error(err)),
+      pixabay.search(params).catch((err) => console.error(err)),
+      unsplash.search(params).catch((err) => console.error(err)),
     ]);
-
     const [pexelsResult, pixabayResult, unsplashResult] = searchApiResult;
 
     const queue: (Promise<SearchResultImage> | SearchResultImage)[] = [];
 
-    pexelsResult.photos.forEach(async (p) => queue.push(pexels.getImage(p)));
-    pixabayResult.hits.forEach((p) => queue.push(pixabay.getImage(p)));
-    unsplashResult.results.forEach((p) => queue.push(unsplash.getImage(p)));
+    if (pexelsResult)
+      pexelsResult.photos.forEach(async (p) => queue.push(pexels.getImage(p)));
+    if (pixabayResult)
+      pixabayResult.hits.forEach((p) => queue.push(pixabay.getImage(p)));
+    if (unsplashResult)
+      unsplashResult.results.forEach((p) => queue.push(unsplash.getImage(p)));
 
     const results = await Promise.all(queue);
     results.sort(() => 0.5 - Math.random());
 
     return {
-      total:
-        pexelsResult.total_results +
-        pixabayResult.totalHits +
-        unsplashResult.total,
       results: results,
     };
   },
@@ -46,7 +44,7 @@ export default defineEventHandler(
       event.res.statusCode = 400;
       return { error: 'Query, maybe?' };
     }
-    params.query = params.query.replace('-', ' ');
+    params.query = params.query.replace(/-+/g, ' ');
 
     if (params.page && !isFinite(parseInt(params.page as string))) {
       event.res.statusCode = 400;

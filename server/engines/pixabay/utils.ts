@@ -1,4 +1,4 @@
-import { SearchResultImage } from '~/server/types';
+import { SearchResultImage } from 'types';
 import { getBlurhash } from '../utils';
 import { PixabayImage } from './types';
 

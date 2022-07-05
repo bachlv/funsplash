@@ -1,4 +1,4 @@
-import { SearchParams } from 'server/types';
+import { SearchParams } from 'types';
 import { PexelsSearchParams, PexelsSearchResult } from './types';
 
 const getSearchParams = (params: SearchParams): PexelsSearchParams => {
@@ -10,7 +10,7 @@ const getSearchParams = (params: SearchParams): PexelsSearchParams => {
   for (const key in params) {
     switch (key) {
       case 'page':
-        searchParams.page = params.page;
+        searchParams.page = params.page as string;
         break;
     }
   }
@@ -31,6 +31,6 @@ export default async function (
     },
   });
 
-  if (!search.ok) throw new Error('Pexels API Error: ' + search.status);
-  return search.json();
+  if (search.ok) return search.json();
+  else console.error(await search.json());
 }

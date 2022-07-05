@@ -8,12 +8,8 @@ export const request = async (url: URL) => {
       'Accept-Version': process.env.ENGINE_UNSPLASH_API_VER,
     },
   });
-
-  if (!search.ok)
-    throw new Error(
-      'Unsplash API Error: ' + search.status + (await search.text())
-    );
-  return search.json();
+  if (search.ok) return search.json();
+  else console.error('Unsplash API Error:', search.status, await search.text());
 };
 
 export const getImage = (photo: UnsplashImage): SearchResultImage => ({

@@ -40,6 +40,8 @@ ul {
   --border-width: 1px;
   --color-primary: black;
   --color-accent: rgba(0, 0, 0, 0.15);
+  --screen-xl: 1280px;
+  --screen-2xl: 1536px;
 }
 
 .page-enter-active,
