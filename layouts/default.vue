@@ -19,6 +19,11 @@ body {
   font-feature-settings: 'kern' on;
 }
 
+a {
+  color: unset;
+  text-decoration: unset;
+}
+
 ul {
   list-style: none;
 }
@@ -40,6 +45,8 @@ ul {
   --border-width: 1px;
   --color-primary: black;
   --color-accent: rgba(0, 0, 0, 0.15);
+  --color-accent-bg: rgba(0, 0, 0, 0.05);
+  --screen-sm: 640px;
   --screen-xl: 1280px;
   --screen-2xl: 1536px;
 }

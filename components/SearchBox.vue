@@ -4,7 +4,7 @@
     :class="{
       expanded: page === 'home',
       collapsed: page !== 'home',
-      loading: isImageLoading,
+      'result-loading': isImageLoading,
     }"
   >
     <div class="branding" v-if="page === 'home'">
@@ -15,28 +15,43 @@
 
     <form
       class="search-box"
-      :class="{ 'ac-loading': isAcFetching, invalid: isQueryInvalid }"
+      :class="{
+        'ac-loading': isAcFetching,
+        invalid: isQueryInvalid,
+        focused: isInputFocused,
+      }"
       @submit.prevent="submitSearchRequest"
-      key="search-box"
     >
       <input
         type="text"
         ref="searchInput"
         v-model="query"
         placeholder="Search images"
-        @focus="() => (isAcEnabled = true)"
-        @keydown.tab="() => (isAcEnabled = false)"
+        @focus="onInputFocus()"
+        @blur="onInputBlur()"
+        @keydown.tab="onInputBlur()"
         @input="resetAutocomplete"
         @keydown.up.prevent="onArrowUp"
         @keydown.down.prevent="onArrowDown"
         autocomplete="off"
       />
 
-      <button type="submit" class="search-button" ref="searchButton">
+      <button
+        type="submit"
+        class="search-button"
+        ref="searchButton"
+        @focus="onInputFocus()"
+        @blur="onInputBlur()"
+      >
         <IconSearch />
       </button>
 
-      <ul v-show="shouldOpen" ref="autocomplete" class="autocomplete">
+      <ul
+        v-show="shouldOpen"
+        ref="autocomplete"
+        class="autocomplete"
+        :class="{ active: acSelectionIndex !== -1 }"
+      >
         <li
           class="autocomplete-item"
           v-for="(item, index) in autocomplete"
@@ -65,7 +80,7 @@ export default {
       isAcPending: false,
       isAcFetching: false,
       isImageLoading: useState('loading', () => false),
-      isInputFocusedOut: false,
+      isInputFocused: false,
       autocomplete: [],
       acSelectionIndex: -1,
     };
@@ -97,6 +112,7 @@ export default {
   },
 
   mounted() {
+    window.scrollTo(0, 0);
     document.addEventListener('click', this.handleClickOutside);
   },
 
@@ -117,9 +133,7 @@ export default {
         setTimeout(() => (this.isQueryInvalid = false), 500);
         return;
       }
-      this.isImageLoading = true;
       this.navigate(this.query);
-      window.scrollTo(0, 0);
     },
     getQueryFromPath() {
       const query = this.$route.path.split('/')[2]?.replace(/-+/g, ' ');
@@ -166,6 +180,14 @@ export default {
       this.acSelectionIndex !== -1;
       this.isAcPending = false;
     },
+
+    onInputFocus() {
+      this.isAcEnabled = true;
+      this.isInputFocused = true;
+    },
+    onInputBlur() {
+      this.isInputFocused = false;
+    },
   },
 
   watch: {
@@ -184,6 +206,9 @@ export default {
 
       this.isAcPending = false;
       this.isAcFetching = false;
+    },
+    '$route.path': function (path: string) {
+      if (path !== '/') this.isImageLoading = true;
     },
   },
 };
@@ -234,6 +259,7 @@ export default {
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
+  z-index: 1;
 }
 
 .expanded {
@@ -247,6 +273,13 @@ export default {
     .logo {
       height: 4rem;
       margin: 0 auto;
+    }
+  }
+  .search-box {
+    &:hover {
+      &::before {
+        background-color: var(--color-primary);
+      }
     }
   }
 }
@@ -263,6 +296,11 @@ export default {
 
   .search-box {
     width: 32rem;
+    margin-right: 0.5rem;
+    background-color: var(--color-accent-bg);
+    &::before {
+      padding: 0;
+    }
   }
 
   .branding {
@@ -271,7 +309,7 @@ export default {
     padding: inherit;
   }
   .logo {
-    padding: 0.1rem;
+    padding: 0.0625rem;
     height: 100%;
   }
 
@@ -279,7 +317,7 @@ export default {
     @include before-loading-indicator;
     padding-bottom: var(--border-width);
   }
-  &.loading {
+  &.result-loading {
     &::before {
       @include before-loading-animation;
       padding-bottom: 0.125rem;
@@ -306,9 +344,17 @@ export default {
   transition: all 0.2s ease;
   border-radius: var(--border-radius);
 
+  &.focused {
+    background-color: unset;
+    &::before {
+      padding: var(--border-width);
+      background-color: var(--color-primary);
+    }
+  }
+
   &:hover {
     &::before {
-      background-color: var(--color-primary);
+      padding: var(--border-width);
     }
   }
 
@@ -382,6 +428,10 @@ export default {
   border-radius: var(--border-radius);
   text-align: left;
   z-index: 10;
+  transition: border 0.2s ease-out;
+  &.active {
+    border-color: var(--color-primary);
+  }
 }
 
 .autocomplete-item {

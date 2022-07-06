@@ -8,9 +8,12 @@
       />
     </div>
     <div class="loading">
-      <p v-if="isEndOfResult">No more results</p>
+      <p v-if="isEndOfResult">This is the end...</p>
       <p v-else>Loading...</p>
-      <IntersectionObserver @intersect="intersected" />
+      <IntersectionObserver
+        @intersect="intersected"
+        :options="{ rootMargin: '1600px' }"
+      />
     </div>
   </div>
 </template>
@@ -66,6 +69,7 @@ const gridGapStyle = computed(() => ({
 
 onMounted(() => {
   useState('loading').value = false;
+  window.scrollTo(0, 0);
 });
 
 watch(loading, (value: boolean) => {
@@ -75,17 +79,25 @@ watch(loading, (value: boolean) => {
 
 <style lang="scss">
 .result-container {
-  display: grid;
-  grid-gap: var(--grid-gap);
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  grid-auto-flow: dense;
-  grid-auto-columns: 1px;
-  max-width: var(--screen-xl);
-  margin: 5rem auto;
+  margin: 5rem auto 0 auto;
+  @media (min-width: 640px) {
+    display: grid;
+    grid-gap: var(--grid-gap);
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    grid-auto-flow: dense;
+    grid-auto-columns: 1px;
+    max-width: var(--screen-xl);
+    margin: 5rem auto;
+  }
+  @media (min-width: 640px) and (max-width: 1280px) {
+    margin: 5rem 1rem;
+  }
 }
 
 .loading {
   text-align: center;
-  padding: 0 0 2rem;
+  color: gray;
+
+  margin: 0 0 6rem;
 }
 </style>

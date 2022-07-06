@@ -32,5 +32,5 @@ export default async function (
   });
 
   if (search.ok) return search.json();
-  else console.error(await search.json());
+  else console.error('Pexels API error:', await search.text());
 }
