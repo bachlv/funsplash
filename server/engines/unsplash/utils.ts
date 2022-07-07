@@ -1,4 +1,4 @@
-import { SearchResultImage } from 'types';
+import { FunsplashImage } from 'types';
 import { UnsplashImage, UnsplashAutocomplete } from './types';
 
 export const request = async (url: URL) => {
@@ -12,7 +12,7 @@ export const request = async (url: URL) => {
   else console.error('Unsplash API Error:', search.status, await search.text());
 };
 
-export const getImage = (photo: UnsplashImage): SearchResultImage => ({
+export const getImage = (photo: UnsplashImage): FunsplashImage => ({
   id: 'un-' + photo.id,
   width: photo.width,
   height: photo.height,

@@ -6,13 +6,18 @@
       )}`,
       position: 'relative',
     }"
-    @click="(e) => onClick(e)"
     class="img-card"
+    @mouseenter="onFocus(true)"
+    @mouseleave="onFocus(false)"
+    @focus="onFocus(true)"
+    @blur="onFocus(false)"
+    tabindex="0"
   >
-    <div class="img-overlay">
-      <a class="img-desc">
+    <!-- <div class="img-overlay-bg" @click="onClick(e)"></div> -->
+    <div class="img-overlay" :class="{ focused: isFocused }">
+      <NuxtLink class="img-desc" :to="'/photos/' + image.id">
         {{ image.description }}
-      </a>
+      </NuxtLink>
 
       <div class="card-bottom">
         <a class="vendor-info" :href="image.link" target="_blank">
@@ -29,37 +34,69 @@
       </div>
     </div>
 
-    <img :src="image.src.regular" @load="loadImage" class="img-result" />
+    <img
+      :src="image.src.regular"
+      @click="showModalOnClick"
+      @load="loadImage"
+      class="img-result"
+    />
     <div v-if="!isLoaded" class="img-loading"></div>
+
+    <Teleport to="body">
+      <!-- use the modal component, pass in the prop -->
+      <ImageModal
+        :image="image"
+        :show="showModal"
+        @close="closeModal"
+        @keydown.esc="showModal = false"
+      >
+        <template #header>
+          <h3>custom header</h3>
+        </template>
+      </ImageModal>
+    </Teleport>
   </div>
 </template>
 
 <script lang="ts">
 import { PropType } from 'vue';
-import { SearchResultImage } from '~~/types';
+import { FunsplashImage } from 'types';
 
 export default {
   props: {
     image: {
-      type: Object as PropType<SearchResultImage>,
+      type: Object as PropType<FunsplashImage>,
       required: true,
     },
     gridGap: Number,
   },
+
   data() {
     return {
       offsetWidth: 350,
-      isLoaded: false,
+      isLoaded: true,
+      showModal: false,
+      isFocused: false,
     };
   },
+
   methods: {
     loadImage() {
       this.isLoaded = true;
     },
+    onFocus(value: boolean) {
+      this.isFocused = value;
+    },
 
-    onClick(e) {
-      console.log(e);
-      // window.history.pushState({}, null, '/photos/' + this.image.id);
+    showModalOnClick() {
+      if (window.innerWidth > 640) {
+        this.showModal = true;
+        window.history.pushState({}, null, '/photos/' + this.image.id);
+      } else navigateTo('/photos/' + this.image.id);
+    },
+    closeModal() {
+      this.showModal = false;
+      window.history.back();
     },
   },
 };
@@ -90,13 +127,17 @@ export default {
   height: 100%;
   width: 100%;
   object-fit: cover;
-  background-color: #0000000f;
+  cursor: pointer;
+  @include tablet() {
+    cursor: zoom-in;
+  }
 }
 
 .img-overlay {
   display: flex;
   flex-direction: column-reverse;
   margin: 1rem 1rem 5rem;
+  // pointer-events: none;
   @include tablet() {
     position: absolute;
     flex-direction: column;
@@ -106,39 +147,47 @@ export default {
     padding: 1.5rem;
     margin: unset;
     text-shadow: 0 0 0.25rem black;
-    opacity: 0;
     transition: opacity 0.2s ease-out;
-    &.focused,
-    &:hover {
-      opacity: 1;
-      background: linear-gradient(
-        180deg,
-        #00000055,
-        #00000000 20%,
-        #00000000 80%,
-        #00000055
-      );
-    }
+    opacity: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      180deg,
+      #00000055,
+      #00000000 20%,
+      #00000000 80%,
+      #00000055
+    );
+  }
+  &.focused {
+    opacity: 1;
   }
 }
 
 .card-bottom {
   display: flex;
   justify-content: space-between;
-  // align-items: center;
 }
 
 .img-desc {
   font-size: 0.75rem;
-  padding-right: 2.5rem;
+  padding-right: 3.75rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  pointer-events: all;
   @include transition-opacity;
   @include tablet() {
+    overflow: visible;
+    white-space: unset;
+
     font-size: 0.875rem;
     color: white;
   }
 }
 
 .btn-download {
+  pointer-events: all;
   position: absolute;
   right: 1rem;
   width: 3rem;
@@ -156,7 +205,8 @@ export default {
 
   @include tablet() {
     position: relative;
-    height: 2.5rem;
+    width: 2.25rem;
+    height: 2.25rem;
     padding: 0.5rem;
     right: unset;
     svg {
@@ -166,6 +216,7 @@ export default {
 }
 
 .vendor-info {
+  pointer-events: all;
   display: flex;
   align-items: flex-end;
   max-width: fit-content;
@@ -181,14 +232,12 @@ export default {
 
 .vendor-logo {
   max-height: 0.875rem;
-  margin-left: 0.25rem;
-  margin-bottom: 0.2rem;
+  margin: 0 0 0.2rem 0.25rem;
   filter: invert(100%);
 
   @include tablet() {
     max-height: 1rem;
-    margin-bottom: 0.125rem;
-    margin-right: 0.5rem;
+    margin: 0 0.5rem 0.125rem 0;
     filter: drop-shadow(0 0 0.125rem #000000dd);
   }
 }
@@ -197,5 +246,14 @@ export default {
   @include tablet() {
     margin-bottom: 0;
   }
+}
+
+.img-loading {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, white, #f2f2f2 30%, #f2f2f2 70%, white);
+  background-size: 200% auto;
+  animation: loading 1s linear infinite;
 }
 </style>

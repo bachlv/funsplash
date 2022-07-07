@@ -1,5 +1,6 @@
 import { SearchParams } from 'types';
 import { PexelsSearchParams, PexelsSearchResult } from './types';
+import { request } from './utils';
 
 const getSearchParams = (params: SearchParams): PexelsSearchParams => {
   const searchParams: PexelsSearchParams = {
@@ -25,12 +26,5 @@ export default async function (
   const url = new URL(process.env.ENGINE_PEXELS_API_URL + '/search');
   url.search = new URLSearchParams(searchParams).toString();
 
-  const search = await fetch(url, {
-    headers: {
-      Authorization: process.env.ENGINE_PEXELS_API_KEY,
-    },
-  });
-
-  if (search.ok) return search.json();
-  else console.error('Pexels API error:', await search.text());
+  return await request(url);
 }

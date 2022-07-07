@@ -97,7 +97,6 @@ watch(loading, (value: boolean) => {
 .loading {
   text-align: center;
   color: gray;
-
   margin: 0 0 6rem;
 }
 </style>

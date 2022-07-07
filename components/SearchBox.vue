@@ -136,6 +136,7 @@ export default {
       this.navigate(this.query);
     },
     getQueryFromPath() {
+      if (this.$route.path.slice(0, 8) !== '/search/') return '';
       const query = this.$route.path.split('/')[2]?.replace(/-+/g, ' ');
       return query ? decodeURIComponent(query) : '';
     },
@@ -240,15 +241,6 @@ export default {
   );
   background-size: 200% auto;
   animation: loading 1s linear infinite;
-}
-
-@keyframes loading {
-  from {
-    background-position: 0 0;
-  }
-  to {
-    background-position: -200% 0;
-  }
 }
 
 .search-box-container {

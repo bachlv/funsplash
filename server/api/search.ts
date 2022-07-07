@@ -3,19 +3,19 @@ import {
   ApiErrorMessage,
   SearchParams,
   SearchResult,
-  SearchResultImage,
+  FunsplashImage,
 } from '~/types';
 
 const search = cachedFunction(
   async (params: SearchParams): Promise<SearchResult> => {
     const searchApiResult = await Promise.all([
-      pexels.search(params).catch((err) => console.error(err)),
-      pixabay.search(params).catch((err) => console.error(err)),
-      unsplash.search(params).catch((err) => console.error(err)),
+      pexels.search(params),
+      pixabay.search(params),
+      unsplash.search(params),
     ]);
     const [pexelsResult, pixabayResult, unsplashResult] = searchApiResult;
 
-    const queue: (Promise<SearchResultImage> | SearchResultImage)[] = [];
+    const queue: (Promise<FunsplashImage> | FunsplashImage)[] = [];
 
     if (pexelsResult)
       pexelsResult.photos.forEach(async (p) => queue.push(pexels.getImage(p)));

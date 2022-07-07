@@ -1,5 +1,6 @@
 import { SearchParams } from 'types';
 import { PixabaySearchParams, PixabaySearchResult } from './types';
+import { request } from './utils';
 
 const getSearchParams = (params: SearchParams): PixabaySearchParams => {
   const searchParams: PixabaySearchParams = {
@@ -25,8 +26,5 @@ export default async function (
   const url = new URL(process.env.ENGINE_PIXABAY_API_URL + '/');
   url.search = new URLSearchParams(searchParams).toString();
 
-  const search = await fetch(url);
-
-  if (search.ok) return search.json();
-  else console.error('Pexels API Error:', search.status, search.headers);
+  return await request(url);
 }

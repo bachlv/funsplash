@@ -1,6 +1,12 @@
-import { SearchResultImage } from 'types';
+import { FunsplashImage } from 'types';
 import { getBlurhash } from '../utils';
 import { PixabayImage } from './types';
+
+export const request = async (url: URL) => {
+  const search = await fetch(url);
+  if (search.ok) return search.json();
+  else console.error('Pexels API Error:', search.status, await search.text());
+};
 
 const getDirectLink = (previewURL: string): string =>
   process.env.ENGINE_PIXABAY_DL_URL +
@@ -10,7 +16,7 @@ const getDirectLink = (previewURL: string): string =>
 
 export const getImage = async (
   photo: PixabayImage
-): Promise<SearchResultImage> => ({
+): Promise<FunsplashImage> => ({
   id: 'pi-' + photo.id,
   width: photo.imageWidth,
   height: photo.imageHeight,

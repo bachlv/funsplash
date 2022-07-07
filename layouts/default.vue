@@ -34,11 +34,6 @@ ul {
   box-sizing: inherit;
 }
 
-// *:focus {
-//   outline: 2px solid var(--color-accent);
-//   border-radius: inherit;
-// }
-
 :root {
   --sans-serif: -apple-system, Pretendard, system-ui, sans-serif;
   --border-radius: 0.25rem;
@@ -61,5 +56,14 @@ ul {
   opacity: 0;
   transform: translateZ(0);
   backface-visibility: hidden;
+}
+
+@keyframes loading {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
 }
 </style>

@@ -6,22 +6,22 @@ export type SearchParams = {
 
 export type SearchResult = {
   total?: number;
-  results: SearchResultImage[] | any;
+  results: FunsplashImage[] | any;
 };
 
-export type SearchResultImage = {
+export type FunsplashImage = {
   id: string;
   width: number;
   height: number;
   description: string;
   blurhash?: string;
-  src: SearchResultImageUrl;
+  src: FunsplashImageUrl;
   photographer: string;
   provider: string;
   link: string;
 };
 
-export type SearchResultImageUrl = {
+export type FunsplashImageUrl = {
   original: string;
   regular: string;
   small?: string;
