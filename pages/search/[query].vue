@@ -7,9 +7,10 @@
         :grid-gap="gridGap"
       />
     </div>
-    <div class="loading">
-      <p v-if="isEndOfResult">This is the end...</p>
-      <p v-else>Loading...</p>
+
+    <div class="result-loading">
+      <div v-if="isEndOfResult">This is the end...</div>
+      <div v-else>Loading...</div>
       <IntersectionObserver
         @intersect="intersected"
         :options="{ rootMargin: '1600px' }"
@@ -25,12 +26,12 @@ const getCurrentPagination = () => {
   const pageNumber = parseInt(useRoute().query.page as string);
   return isFinite(pageNumber) ? pageNumber : 1;
 };
+
 const pagination = ref(getCurrentPagination());
 const searchParams = ref({
   query: useRoute().params.query as string,
   page: pagination,
 });
-
 const loading = ref(false);
 useState('page').value = 'search';
 
@@ -41,7 +42,6 @@ const getImages = async (query: SearchParams | Record<string, number>) => {
   return result;
 };
 const searchResult = ref(await getImages(searchParams.value));
-
 const isEndOfResult = ref(false);
 
 const intersected = async () => {
@@ -67,13 +67,24 @@ const gridGapStyle = computed(() => ({
   '--grid-gap': '16px',
 }));
 
+const formatTitle = (s: string) =>
+  s.charAt(0).toUpperCase() + s.slice(1).replace(/ ./g, (c) => c.toUpperCase());
+
 onMounted(() => {
   useState('loading').value = false;
   window.scrollTo(0, 0);
 });
 
+onUnmounted(() => {
+  searchResult.value = null;
+});
+
 watch(loading, (value: boolean) => {
   useState('loading').value = value;
+});
+
+useHead({
+  title: `Free ${formatTitle(searchParams.value.query)} images`,
 });
 </script>
 
@@ -94,7 +105,7 @@ watch(loading, (value: boolean) => {
   }
 }
 
-.loading {
+.result-loading {
   text-align: center;
   color: gray;
   margin: 0 0 6rem;

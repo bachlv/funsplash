@@ -13,8 +13,8 @@
   "devDependencies": {
     "@types/sharp": "^0.30.4",
     "canvas": "^2.9.3",
-    "sharp": "^0.30.7",
-    "nuxt": "3.0.0-rc.4"
+    "nuxt": "3.0.0-rc.4",
+    "sharp": "^0.30.7"
   },
   "dependencies": {
     "blurhash": "^1.1.5",

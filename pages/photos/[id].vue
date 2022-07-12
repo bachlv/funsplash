@@ -1,11 +1,13 @@
 <template>
   <div class="img-container">
-    <img @load="onLoad" :src="image.src.regular" />
+    <Title>{{ formatTitle(image.description) }}</Title>
+
+    <img @load="onLoad" :src="image.src.regular" :alt="image.description" />
 
     <div v-show="isLoaded" class="img-info">
       <p class="img-info-author">{{ image.photographer }}</p>
       <p class="img-info-desc">{{ image.description }}</p>
-      <a class="btn-download" :href="image.link" target="_blank"
+      <a class="btn-download" href="javascript:;" target="_blank" tabindex="1"
         >Download <IconDownload
       /></a>
     </div>
@@ -32,6 +34,12 @@ export default {
       useState('loading').value = false;
       this.isLoaded = true;
     },
+    formatTitle(s: string) {
+      return (
+        s.charAt(0).toUpperCase() +
+        s.slice(1).replace(/ ./g, (c) => c.toUpperCase())
+      );
+    },
   },
 
   created() {
@@ -50,23 +58,17 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin: 4rem auto 0 auto;
+  margin: 5rem auto 0 auto;
   max-width: 1024px;
   img {
-    max-height: 80vh;
     max-width: 100%;
     align-self: center;
   }
 }
 
-.img-placeholder {
-  max-width: 100%;
-  background-color: var(--color-accent-bg);
-}
-
 .img-info {
   position: relative;
-  margin: 2rem 1rem;
+  margin: 3rem 2rem;
   width: inherit;
 
   .img-info-desc {
@@ -85,6 +87,10 @@ export default {
     opacity: 1;
     color: white;
     font-weight: 600;
+    &:focus {
+      outline: var(--border-width) solid var(--color-primary);
+      outline-offset: 0.125rem;
+    }
     svg {
       padding-left: 0.25rem;
       height: 1.25rem;

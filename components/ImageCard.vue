@@ -12,23 +12,24 @@
     @focus="onFocus(true)"
     @blur="onFocus(false)"
     tabindex="0"
+    @keydown.enter="showModalOnEvent"
   >
-    <!-- <div class="img-overlay-bg" @click="onClick(e)"></div> -->
     <div class="img-overlay" :class="{ focused: isFocused }">
-      <NuxtLink class="img-desc" :to="'/photos/' + image.id">
+      <NuxtLink class="img-desc" :to="'/photos/' + image.id" tabindex="-1">
         {{ image.description }}
       </NuxtLink>
 
       <div class="card-bottom">
-        <a class="vendor-info" :href="image.link" target="_blank">
+        <a class="vendor-info" :href="image.link" target="_blank" tabindex="-1">
           <img
-            :src="`/images/${image.provider}.png`"
             class="vendor-logo"
+            :src="`/images/${image.provider}.png`"
             :class="{ 'vendor-logo-alt': image.provider === 'pixabay' }"
+            :alt="`${image.provider} logo`"
           />
           <div>{{ image.photographer }}</div>
         </a>
-        <a class="btn-download" :href="image.link" target="_blank"
+        <a class="btn-download" :href="image.link" target="_blank" tabindex="-1"
           ><IconDownload
         /></a>
       </div>
@@ -36,14 +37,13 @@
 
     <img
       :src="image.src.regular"
-      @click="showModalOnClick"
+      @click="showModalOnEvent"
       @load="loadImage"
+      :alt="image.description"
       class="img-result"
     />
-    <div v-if="!isLoaded" class="img-loading"></div>
 
-    <Teleport to="body">
-      <!-- use the modal component, pass in the prop -->
+    <Teleport v-if="isFocused || showModal" :disabled="isFocused" to="body">
       <ImageModal
         :image="image"
         :show="showModal"
@@ -74,10 +74,15 @@ export default {
   data() {
     return {
       offsetWidth: 350,
-      isLoaded: true,
+      isLoaded: false,
       showModal: false,
       isFocused: false,
+      isMounted: false,
     };
+  },
+
+  mounted() {
+    this.isMounted = true;
   },
 
   methods: {
@@ -88,15 +93,17 @@ export default {
       this.isFocused = value;
     },
 
-    showModalOnClick() {
+    showModalOnEvent() {
       if (window.innerWidth > 640) {
         this.showModal = true;
         window.history.pushState({}, null, '/photos/' + this.image.id);
+        this.$el.blur();
       } else navigateTo('/photos/' + this.image.id);
     },
     closeModal() {
       this.showModal = false;
-      window.history.back();
+      this.isFocused = true;
+      this.$router.back();
     },
   },
 };
@@ -121,6 +128,17 @@ export default {
 .img-card {
   display: flex;
   flex-direction: column-reverse;
+  transition: box-shadow 0.3s ease-out;
+  @include tablet {
+    &:focus {
+      outline: var(--border-width) solid var(--color-primary);
+      outline-offset: 0.125rem;
+    }
+    &:hover,
+    &:focus {
+      box-shadow: var(--shadow-lg);
+    }
+  }
 }
 
 .img-result {
@@ -137,7 +155,6 @@ export default {
   display: flex;
   flex-direction: column-reverse;
   margin: 1rem 1rem 5rem;
-  // pointer-events: none;
   @include tablet() {
     position: absolute;
     flex-direction: column;
@@ -246,14 +263,5 @@ export default {
   @include tablet() {
     margin-bottom: 0;
   }
-}
-
-.img-loading {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, white, #f2f2f2 30%, #f2f2f2 70%, white);
-  background-size: 200% auto;
-  animation: loading 1s linear infinite;
 }
 </style>

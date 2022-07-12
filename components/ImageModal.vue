@@ -1,18 +1,30 @@
 <template>
   <Transition name="modal">
     <div v-if="show" class="modal-mask">
+      <div v-if="show" class="modal-mask-bg" @click="$emit('close')"></div>
       <div class="modal-wrapper">
         <div class="modal-container">
-          <img :src="image.src.regular" class="modal-img" />
+          <img
+            :src="image.src.regular"
+            class="modal-img"
+            :alt="image.description"
+          />
 
-          <NuxtLink class="modal-info" :to="'/photos/' + image.id">
-            <p class="img-info-author">{{ image.photographer }}</p>
-            <p class="img-info-desc">{{ image.description }}</p>
-            <a class="btn-download primary" :href="image.link" target="_blank"
+          <div class="modal-info">
+            <NuxtLink :to="'/photos/' + image.id" class="img-info-author">{{
+              image.photographer
+            }}</NuxtLink>
+            <NuxtLink :to="'/photos/' + image.id" class="img-info-desc">{{
+              image.description
+            }}</NuxtLink>
+            <a
+              class="btn-download primary"
+              :href="image.link"
+              target="_blank"
+              tabindex="0"
               ><IconDownload
             /></a>
-            <!-- <p>{{ image.width }} x {{ image.height }}</p> -->
-          </NuxtLink>
+          </div>
           <button class="modal-close-button" @click="$emit('close')">
             <IconClose />
           </button>
@@ -34,11 +46,17 @@ export default {
     },
     show: Boolean,
   },
+
   methods: {
     handleKeyboardEvents(event: KeyboardEvent) {
       if (event.code === 'Escape') this.$emit('close');
     },
   },
+
+  unmounted() {
+    document.removeEventListener('keydown', this.handleKeyboardEvents);
+  },
+
   watch: {
     show(value: boolean) {
       if (value)
@@ -63,6 +81,12 @@ export default {
   transition: opacity 0.1s ease-out;
 }
 
+.modal-mask-bg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
 .modal-wrapper {
   display: flex;
   align-items: center;
@@ -75,13 +99,12 @@ export default {
 .modal-container {
   position: relative;
   display: flex;
-
   align-content: center;
   flex-direction: column;
   background-color: #fff;
   border-radius: var(--border-radius);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
-  transition: all 0.3s ease;
+  transition: all 0.2s ease-out;
 }
 
 .modal-img {
@@ -92,8 +115,11 @@ export default {
 }
 
 .modal-info {
+  display: flex;
+  flex-direction: column;
   margin: 1.5rem;
   position: relative;
+  min-height: 2.5rem;
 }
 
 .img-info-author {
