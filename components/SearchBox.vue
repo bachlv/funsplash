@@ -26,7 +26,7 @@
         type="text"
         ref="searchInput"
         v-model="query"
-        placeholder="Search in millions of free images"
+        placeholder="Search for any free stock image..."
         @focus="onInputFocus()"
         @blur="onInputBlur()"
         @input="resetAutocomplete"
@@ -310,16 +310,12 @@ export default {
     .logo {
       height: 4rem;
       margin: 0 auto;
+      border-radius: var(--border-radius);
     }
   }
 
   .search-box {
     min-height: 3rem;
-    &:hover {
-      &::before {
-        background-color: var(--color-primary);
-      }
-    }
   }
 }
 
@@ -354,8 +350,9 @@ export default {
     }
   }
   .logo {
-    padding: 0.0625rem;
     height: 100%;
+    max-height: 3rem;
+    border-radius: var(--border-radius);
   }
 
   .search-box {
@@ -390,10 +387,9 @@ export default {
 
   &.focused {
     background-color: unset;
-    box-shadow: var(--shadow-xl);
+    box-shadow: var(--shadow-lg);
     &::before {
       padding: var(--border-width);
-      background-color: var(--color-primary);
     }
   }
 
@@ -462,8 +458,7 @@ export default {
   z-index: 10;
   transition: all 0.2s ease-out;
   &.active {
-    border-color: var(--color-primary);
-    box-shadow: var(--shadow-xl);
+    box-shadow: var(--shadow-lg);
   }
 }
 

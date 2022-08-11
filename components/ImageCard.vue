@@ -100,10 +100,10 @@ export default {
         this.$el.blur();
       } else navigateTo('/photos/' + this.image.id);
     },
-    closeModal() {
+    closeModal(skipRouter: boolean) {
       this.showModal = false;
       this.isFocused = true;
-      this.$router.back();
+      if (!skipRouter) this.$router.back();
     },
   },
 };
@@ -129,6 +129,8 @@ export default {
   display: flex;
   flex-direction: column-reverse;
   transition: box-shadow 0.3s ease-out;
+  border-radius: var(--border-radius);
+
   @include tablet {
     &:focus {
       outline: var(--border-width) solid var(--color-primary);
@@ -136,7 +138,7 @@ export default {
     }
     &:hover,
     &:focus {
-      box-shadow: var(--shadow-lg);
+      box-shadow: var(--shadow-xl);
     }
   }
 }
@@ -145,6 +147,8 @@ export default {
   height: 100%;
   width: 100%;
   object-fit: cover;
+  border-radius: var(--border-radius);
+
   cursor: pointer;
   @include tablet() {
     cursor: zoom-in;
@@ -155,6 +159,8 @@ export default {
   display: flex;
   flex-direction: column-reverse;
   margin: 1rem 1rem 5rem;
+  border-radius: var(--border-radius);
+
   @include tablet() {
     position: absolute;
     flex-direction: column;

@@ -63,6 +63,9 @@ export default {
         document.addEventListener('keydown', this.handleKeyboardEvents);
       else document.removeEventListener('keydown', this.handleKeyboardEvents);
     },
+    $route() {
+      this.$emit('close', true);
+    },
   },
 };
 </script>

@@ -20,5 +20,10 @@
     "blurhash": "^1.1.5",
     "sass": "^1.53.0",
     "sass-loader": "^13.0.2"
+  },
+  "prettier": {
+    "trailingComma": "es5",
+    "semi": true,
+    "singleQuote": true
   }
 }
