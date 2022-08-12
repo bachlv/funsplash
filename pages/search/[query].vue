@@ -107,7 +107,9 @@ useHead({
 
 .result-loading {
   text-align: center;
-  color: gray;
+  @media (min-width: 640px) {
+    color: gray;
+  }
   margin: 0 0 6rem;
 }
 </style>

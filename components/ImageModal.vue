@@ -5,18 +5,18 @@
       <div class="modal-wrapper">
         <div class="modal-container">
           <img
+            ref="img"
             :src="image.src.regular"
             class="modal-img"
             :alt="image.description"
           />
 
           <div class="modal-info">
-            <NuxtLink :to="'/photos/' + image.id" class="img-info-author">{{
-              image.photographer
-            }}</NuxtLink>
-            <NuxtLink :to="'/photos/' + image.id" class="img-info-desc">{{
-              image.description
-            }}</NuxtLink>
+            <div>
+              <NuxtLink :to="'/photos/' + image.id" class="img-info-author">{{
+                image.photographer
+              }}</NuxtLink>
+            </div>
             <a
               class="btn-download primary"
               :href="image.link"
@@ -104,7 +104,7 @@ export default {
   display: flex;
   align-content: center;
   flex-direction: column;
-  background-color: #fff;
+  background-color: #000;
   border-radius: var(--border-radius);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
   transition: all 0.2s ease-out;
@@ -118,21 +118,34 @@ export default {
 }
 
 .modal-info {
+  position: relative;
   display: flex;
   flex-direction: column;
-  margin: 1.5rem;
-  position: relative;
-  min-height: 2.5rem;
+  margin: 0.75rem 1.5rem;
+  min-height: 2.25rem;
+  justify-content: center;
 }
 
 .img-info-author {
   font-weight: 600;
-  margin: 0 0 0.25rem;
+  width: 100%;
+}
+.modal-container .img-info-author {
+  color: white;
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+  &:hover,
+  &:focus {
+    opacity: 1;
+  }
 }
 
 .img-info-desc {
   margin: 0;
   margin-right: 3.5rem;
+  font-size: 0.875rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .modal-close-button {
@@ -160,11 +173,11 @@ export default {
     position: absolute;
     top: 0;
     right: 0;
-    height: 2.75rem;
-    width: 2.75rem;
+    border: none;
+    background-color: #000;
     svg {
       padding: 0.125rem;
-      color: black;
+      color: white;
     }
   }
 }

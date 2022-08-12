@@ -16,7 +16,7 @@
     <form
       class="search-box"
       :class="{
-        'ac-loading': isAcFetching,
+        'ac-loading': isLoading,
         invalid: isQueryInvalid,
         focused: isInputFocused,
       }"
@@ -78,7 +78,7 @@ export default {
       isQueryInvalid: false,
       isAcEnabled: false,
       isAcPending: false,
-      isAcFetching: false,
+      isLoading: false,
       isInputFocused: false,
       autocomplete: [],
       acSelectionIndex: -1,
@@ -141,6 +141,7 @@ export default {
         return;
       }
       this.navigate(this.query);
+      if (this.$route.path === '/') this.isLoading = true;
     },
     getQueryFromPath() {
       if (this.$route.path.slice(0, 8) !== '/search/') return '';
@@ -207,7 +208,7 @@ export default {
       if (!keyword || this.isAcPending) return;
 
       this.isAcPending = true;
-      this.isAcFetching = true;
+      // this.isLoading = true;
       this.acSelectionIndex = -1;
 
       const { data, error } = await useFetch(
@@ -217,10 +218,14 @@ export default {
       else this.autocomplete = (<ApiAutocomplete>data.value).autocomplete;
 
       this.isAcPending = false;
-      this.isAcFetching = false;
+      this.isLoading = false;
     },
+
     '$route.path': function (path: string) {
-      if (path !== '/') this.isImageLoading = true;
+      if (path !== '/') {
+        this.isImageLoading = true;
+        this.isLoading = false;
+      }
     },
   },
 };
@@ -243,15 +248,25 @@ export default {
 }
 
 @mixin before-loading-animation {
+  transition: all;
   background: linear-gradient(
     90deg,
-    white,
-    var(--color-primary) 20%,
-    var(--color-primary) 80%,
-    white
+    var(--color-primary),
+    var(--color-accent) 30%,
+    var(--color-accent) 70%,
+    var(--color-primary)
   );
   background-size: 200% auto;
   animation: loading 1s linear infinite;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes shake {
@@ -354,15 +369,6 @@ export default {
     max-height: 3rem;
     border-radius: var(--border-radius);
   }
-
-  .search-box {
-    width: 32rem;
-    margin-right: 0.5rem;
-    background-color: var(--color-accent-bg);
-    &::before {
-      padding: 0;
-    }
-  }
 }
 
 .invalid {
@@ -387,7 +393,6 @@ export default {
 
   &.focused {
     background-color: unset;
-    box-shadow: var(--shadow-lg);
     &::before {
       padding: var(--border-width);
     }
@@ -404,6 +409,14 @@ export default {
     border-radius: var(--border-radius);
     padding: var(--border-width);
     @include before-loading-indicator;
+  }
+
+  &.ac-loading {
+    &::before {
+      transition: all 0.2s ease-out;
+      opacity: 1;
+      @include before-loading-animation;
+    }
   }
 
   input {

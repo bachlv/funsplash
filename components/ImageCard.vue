@@ -1,10 +1,11 @@
 <template>
   <div
     :style="{
-      'grid-row-end': `span ${Math.ceil(
-        (image.height / image.width) * (offsetWidth / gridGap)
+      'grid-row-end': `span ${Math.floor(
+        (image.height / image.width) * gridGap
       )}`,
       position: 'relative',
+      // 'aspect-ratio': `${image.width / image.height}`,
     }"
     class="img-card"
     @mouseenter="onFocus(true)"
@@ -36,11 +37,12 @@
     </div>
 
     <img
+      ref="img"
+      class="img-result"
       :src="image.src.regular"
       @click="showModalOnEvent"
-      @load="loadImage"
       :alt="image.description"
-      class="img-result"
+      :style="`aspect-ratio: ${image.width / image.height};`"
     />
 
     <Teleport v-if="isFocused || showModal" :disabled="isFocused" to="body">
@@ -73,7 +75,6 @@ export default {
 
   data() {
     return {
-      offsetWidth: 350,
       isLoaded: false,
       showModal: false,
       isFocused: false,
@@ -86,9 +87,6 @@ export default {
   },
 
   methods: {
-    loadImage() {
-      this.isLoaded = true;
-    },
     onFocus(value: boolean) {
       this.isFocused = value;
     },
@@ -129,9 +127,10 @@ export default {
   display: flex;
   flex-direction: column-reverse;
   transition: box-shadow 0.3s ease-out;
-  border-radius: var(--border-radius);
 
   @include tablet {
+    border-radius: var(--border-radius);
+    background: var(--color-accent);
     &:focus {
       outline: var(--border-width) solid var(--color-primary);
       outline-offset: 0.125rem;
@@ -147,11 +146,11 @@ export default {
   height: 100%;
   width: 100%;
   object-fit: cover;
-  border-radius: var(--border-radius);
 
   cursor: pointer;
   @include tablet() {
     cursor: zoom-in;
+    border-radius: var(--border-radius);
   }
 }
 

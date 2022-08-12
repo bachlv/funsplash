@@ -1,6 +1,8 @@
-# Nuxt 3 Minimal Starter
+<div align="center">
 
-Look at the [nuxt 3 documentation](https://v3.nuxtjs.org) to learn more.
+<a href="https://funsplash.vercel.app" align="center"><img src="public/banner.svg" /></a>
+
+</div>
 
 ## Setup
 
@@ -38,5 +40,3 @@ Locally preview production build:
 ```bash
 npm run preview
 ```
-
-Checkout the [deployment documentation](https://v3.nuxtjs.org/guide/deploy/presets) for more information.
